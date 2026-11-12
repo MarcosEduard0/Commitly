@@ -1,0 +1,152 @@
+{
+  "name": "commitly-auto-git-message",
+  "displayName": "Commitly: Auto Git Message",
+  "description": "Mensagens de commit personalizadas a partir do staging, com Codex CLI.",
+  "version": "0.2.4",
+  "icon": "media/icon.png",
+  "publisher": "MarcosEduardo",
+  "private": true,
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "SCM Providers",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": false
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "npm run compile && node --test test/*.test.cjs",
+    "vscode:prepublish": "npm run compile",
+    "package": "node -e \"require('node:fs').mkdirSync('artifacts',{recursive:true})\" && vsce package --allow-missing-repository --out artifacts/commitly-0.2.4.vsix"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{ "id": "commitly", "title": "Commitly", "icon": "media/commitly.svg" }]
+    },
+    "views": {
+      "commitly": [{ "type": "webview", "id": "commitly.configuration", "name": "Configuração" }]
+    },
+    "commands": [
+      {
+        "command": "commitly.generate",
+        "title": "Commitly: Gerar mensagem de commit",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "commitly.regenerate",
+        "title": "Commitly: Regenerar mensagem de commit",
+        "enablement": "!commitly.generating",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "commitly.cancel",
+        "title": "Commitly: Cancelar geração em andamento",
+        "enablement": "commitly.generating",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "commitly.generateWithInstructions",
+        "title": "Commitly: Gerar com instrução adicional",
+        "enablement": "!commitly.generating"
+      },
+      {
+        "command": "commitly.settings",
+        "title": "Commitly: Abrir configurações"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "commitly.generate",
+          "when": "scmProvider == git && !commitly.generating",
+          "group": "navigation@10"
+        },
+        {
+          "command": "commitly.cancel",
+          "when": "scmProvider == git && commitly.generating",
+          "group": "navigation@10"
+        },
+        {
+          "command": "commitly.regenerate",
+          "when": "scmProvider == git",
+          "group": "navigation@11"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Commitly",
+      "properties": {
+        "commitly.language": {
+          "type": "string",
+          "enum": ["pt-BR", "en"],
+          "enumDescriptions": ["Português (Brasil)", "Inglês"],
+          "default": "pt-BR",
+          "scope": "resource",
+          "description": "Idioma do título e do corpo da mensagem de commit."
+        },
+        "commitly.provider": {
+          "type": "string",
+          "enum": [
+            "codex"
+          ],
+          "default": "codex",
+          "description": "Integração para geração de mensagens."
+        },
+        "commitly.codex.path": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Caminho do executável Codex ou codex.js. Vazio: detectar no PATH. Não inclua argumentos."
+        },
+        "commitly.codex.model": {
+          "type": "string",
+          "default": "",
+          "description": "Modelo Codex. Vazio: usar o padrão do CLI sem carregar config.toml."
+        },
+        "commitly.timeoutSeconds": {
+          "type": "number",
+          "default": 120,
+          "minimum": 10,
+          "maximum": 600,
+          "description": "Tempo máximo da geração, em segundos."
+        },
+        "commitly.maxDiffBytes": {
+          "type": "number",
+          "default": 200000,
+          "minimum": 1000,
+          "maximum": 2000000,
+          "description": "Limite do diff enviado. Diffs maiores são recusados, sem truncamento."
+        },
+        "commitly.extraInstructions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Orientações complementares acrescentadas ao prompt em todas as gerações. Não executam comandos."
+        }
+      }
+    }
+  },
+  "overrides": {
+    "minimatch": "^11.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "1.95.0",
+    "@vscode/vsce": "^4.1.0",
+    "typescript": "^5.7.0"
+  }
+}

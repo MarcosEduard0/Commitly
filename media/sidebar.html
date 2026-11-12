@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src {{cspSource}}; script-src 'nonce-{{nonce}}';">
+  <link rel="stylesheet" href="{{style}}">
+  <title>Commitly</title>
+</head>
+<body>
+  <h1>Seu jeito de commitar</h1>
+  <p>Configure a geração e continue preparando seus commits no painel Git.</p>
+  <form id="settings">
+    <label for="scope">Salvar configurações em</label>
+    <select id="scope" disabled></select>
+    <p class="hint">As opções da pasta prevalecem sobre as do usuário. Trocar de destino descarta as edições não salvas.</p>
+    <fieldset id="fields" disabled>
+      <label for="provider">Provedor</label>
+      <select id="provider"><option value="codex">Codex CLI</option></select>
+      <p class="hint">Usa a autenticação do CLI. Outras integrações estarão disponíveis em versões futuras.</p>
+      <label for="model">Modelo</label>
+      <input id="model" type="text" maxlength="200" placeholder="Padrão do Codex CLI" autocomplete="off">
+      <p class="hint">Informe o identificador de um modelo disponível na sua conta ou deixe vazio para usar o padrão.</p>
+      <label for="language">Idioma da mensagem</label>
+      <select id="language">
+        <option value="pt-BR">Português (Brasil)</option>
+        <option value="en">Inglês</option>
+      </select>
+      <p class="hint">Define o idioma do título e do corpo do commit. Nomes técnicos são preservados.</p>
+      <label for="extra">Instruções complementares</label>
+      <textarea id="extra" rows="4" maxlength="50000" placeholder="Ex.: mencionar o número da tarefa quando estiver no diff"></textarea>
+      <p class="hint">Adicione contexto para todas as gerações, sem alterar as regras de geração do Commitly. Não executa comandos no terminal.</p>
+      <button type="submit" id="save">Salvar configurações</button>
+    </fieldset>
+  </form>
+  <div class="actions">
+    <button id="check" type="button" class="secondary" disabled>Verificar Codex CLI</button>
+    <button id="advanced" type="button" class="link">Configurações avançadas</button>
+  </div>
+  <p class="hint">Para orientar apenas um commit, use “Commitly: Gerar com instrução adicional” na paleta de comandos.</p>
+  <p id="activity" role="status"></p>
+  <p id="result" role="status" aria-live="polite"></p>
+  <script nonce="{{nonce}}" src="{{script}}"></script>
+</body>
+</html>
